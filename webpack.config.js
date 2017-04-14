@@ -1,4 +1,5 @@
 var path = require('path')
+var version = require('./package.json').version
 var { readFileSync } = require('fs')
 var babelSettings = JSON.parse(readFileSync('.babelrc'))
 
@@ -32,6 +33,8 @@ module.exports = {
       inject: false,
       minify: false
     }),
-    new LSOffline()
+    new LSOffline({
+      version: version
+    })
   ]
 }

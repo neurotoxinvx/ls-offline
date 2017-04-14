@@ -1,13 +1,14 @@
 var cheerio = require('cheerio')
 var utils = require('./utils')
 var clientKit = require('./clientKit')
-var version = require('./package.json').version
 
 function LSOffline(options) {
   this.options = options
 }
 
 LSOffline.prototype.apply = function(compiler) {
+  var self = this
+
   compiler.plugin('compilation', function(compilation) {
     compilation.plugin('html-webpack-plugin-after-html-processing', function(htmlPluginData, callback) {
 
@@ -26,7 +27,7 @@ LSOffline.prototype.apply = function(compiler) {
       var insertTemp = ''
 
       chunks.forEach(function(key) {
-        LS = utils.createConfig(version, key, htmlPluginData.assets.chunks[key].entry)
+        LS = utils.createConfig(self.options.version, key, htmlPluginData.assets.chunks[key].entry)
       })
 
       insertTemp += utils.concatConfig(LS)
