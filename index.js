@@ -1,6 +1,6 @@
 var cheerio = require('cheerio')
 var utils = require('./utils')
-var clientKit = require('./clientKit')
+var client = require('./client')
 
 function LSOffline(options) {
   this.options = options
@@ -27,12 +27,12 @@ LSOffline.prototype.apply = function(compiler) {
       var insertTemp = ''
 
       chunks.forEach(function(key) {
-        LS = utils.createConfig(self.options.version, key, htmlPluginData.assets.chunks[key].entry)
+        LS = utils.initConfig(self.options.version, key, htmlPluginData.assets.chunks[key].entry)
       })
 
-      insertTemp += utils.concatConfig(LS)
+      insertTemp += utils.createConfig(LS)
 
-      insertTemp += utils.concatClientKit(clientKit, '__clientKit__')
+      insertTemp += utils.createClient(client, '__client__')
 
       $('body').append(insertTemp)
 

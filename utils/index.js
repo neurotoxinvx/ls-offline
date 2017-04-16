@@ -5,7 +5,7 @@ var LS = {
   entry: {}
 }
 
-utils.createConfig = function(version, key, value) {
+utils.initConfig = function(version, key, value) {
   var temp = {}
   temp = Object.assign(LS, temp)
   temp.version = version
@@ -21,10 +21,10 @@ utils.createStyleTag = function(src) {
   return `<link rel="stylesheet" href="${src}" />`
 }
 
-utils.concatConfig = function(config) {
+utils.createConfig = function(config) {
   return `<script type="text/javascript">window.__LS__ = ${JSON.stringify(config)}</script>`
 }
 
-utils.concatClientKit = function(kit, funName) {
-  return `<script type="text/javascript">${kit}</script><script type="text/javascript">${funName}()</script>`
+utils.createClient = function(kit, funName) {
+  return `<script type="text/javascript">${kit}</script><script type="text/javascript">new ${funName}()</script>`
 }

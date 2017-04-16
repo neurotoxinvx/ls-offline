@@ -8,14 +8,14 @@ var LSOffline = require('./index.js')
 
 require('shelljs/global');
 
-rm('-rf', './dist');
+rm('-rf', './example');
 
 module.exports = {
   entry: {
     index: './src/main.js'
   },
   output: {
-    path: path.join(__dirname, './dist'),
+    path: path.join(__dirname, './example'),
     filename: '[name].js'
   },
   module: {
@@ -30,8 +30,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      inject: false,
-      minify: false
+      inject: false
     }),
     new LSOffline({
       version: version
