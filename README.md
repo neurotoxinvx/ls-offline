@@ -44,7 +44,7 @@ new LSOffline({
 
 ##### 参数列表:
 
-######1.version
+###### 1.version
 
 类型: String
 
