@@ -1,4 +1,4 @@
-module.exports = function __client__() {
+module.exports = function __client__(type) {
   var VERSION = '__LS_VERSION__';
   var entry = window.__LS__.entry;
   var keys = [];
@@ -104,21 +104,17 @@ module.exports = function __client__() {
     document.head.appendChild(script);
   };
 
-  var runLoader = function() {
+  var runLoader = function(type) {
     var version = storage.get(VERSION);
+
+    if (type === 'cleaner') {
+      version = 'cleaner';
+    }
 
     keys.forEach(function(key, index) {
       createLoad(key, entry[key], index, version !== window.__LS__.version);
     })
   };
 
-  var runCleaner = function() {
-    storage.remove(VERSION);
-
-    keys.forEach(function(key) {
-      storage.remove(key);
-    })
-  };
-
-  runLoader();
+  runLoader(type);
 };

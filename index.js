@@ -32,7 +32,7 @@ LSOffline.prototype.apply = function(compiler) {
 
       insertTemp += utils.createConfig(LS)
 
-      insertTemp += utils.createClient(client, '__client__')
+      insertTemp += utils.createClient(client, '__client__', self.options.type)
 
       $('body').append(insertTemp)
 

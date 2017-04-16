@@ -36,7 +36,30 @@ module.exports = {
 ### 参数
 
 ```javascript
-new LSOffline(options)
+new LSOffline({
+  version: '0.0.1',
+  cache: true
+})
 ```
 
-- version : 版本号，用于本地缓存对比是否需要请求更新静态资源，建议传入 package.json 中的 version。
+##### 参数列表:
+
+######1.version
+
+类型: String
+
+本地缓存版本号，用于本地缓存对比是否需要请求更新静态资源，建议传入 package.json 中的 version。
+
+##### 注：更新资源请务必升级版本号
+
+###### 2.cache
+
+类型: Boolean
+
+是否启用 LocalStorage 缓存，默认为 `true` ，如果置为 `false` ，则每次加载页面都会发送加载资源请求。
+
+### 依赖
+
+ls-offline 依赖 html-webpack-plugin ，请务必安装 html-webpack-plugin，并在调用 ls-offline 之前调用 html-webpack-plugin。
+
+由于首次加载静态资源时使用 Ajax 请求资源，所以在使用 ls-offline 前请为你的静态资源开启跨域，如果未开启跨域将会报错。
