@@ -1,80 +1,133 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Webpack App</title></head><body><script type="text/javascript">
-window.__LS__ = {"version":"0.0.1","entry":{"index":"index.js"}}
-</script>
-<script type="text/javascript">
-function __clientKit__() {
-  var __VERSION__ = '__LS_VERSION__'
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Webpack App</title>
+  </head>
+  <body>
+  <script type="text/javascript">window.__LS__ = {"version":"0.0.3","entry":{"index":"index.js"}}</script><script type="text/javascript">function __client__(type) {
+  var VERSION = '__LS_VERSION__';
+  var entry = window.__LS__.entry;
+  var keys = [];
 
-  var getLocalStorage = function(key) {
-    try {
-      return window.localStorage[key]
-    } catch(e) {
-      throw new Error(e)
+  for (var key in entry) {
+    if (entry.hasOwnProperty(key)) {
+      keys.push(key)
     }
   }
+  var lib = {
+    length: 0
+  };
 
-  var setLocalStorage = function(key, value) {
-    try {
-      window.localStorage[key] = value
-    } catch(e) {
-      throw new Error(e)
+  var storage = {
+    check: function(key) {
+      return window.localStorage.hasOwnProperty(key)
+    },
+    get: function(key) {
+      try {
+        return window.localStorage.getItem(key);
+      } catch(error) {
+        throw new Error(error);
+      }
+    },
+    set: function(key, value) {
+      try {
+        window.localStorage.setItem(key, value)
+      } catch(error) {
+        throw new Error(error);
+      }
+    },
+    remove: function(key) {
+      try {
+        window.localStorage.removeItem(key)
+      } catch(error) {
+        throw new Error(error)
+      }
     }
-  }
+  };
 
-  var requestJS = function(path, jsname, callback){
+  var createScriptTag = function(src) {
+    return `<script type="text/javascript" src="${src}"></script>`;
+  };
+
+  var requestJS = function(params, callback, fallback){
     try{
       var xhr = new XMLHttpRequest();
-      xhr.open("get", path, true);
+      xhr.open("get", params.path, true);
       xhr.onreadystatechange = function(){
         if (xhr.readyState == 4){
-          if((xhr.status >=200 && xhr.status < 300 ) || xhr.status == 304){
-            if(xhr.response!=''){
-              callback(path, jsname, xhr.response);
+          if((xhr.status >= 200 && xhr.status < 300 ) || xhr.status === 304){
+            if(xhr.response != ''){
+              callback(params, xhr.response);
             }
           }
         }
       };
       xhr.send(null);
-    } catch (e){
-      throw new Error(e)
+    } catch (error){
+      fallback(params, error);
+      throw new Error(error);
     }
   };
 
-  var createScript = function(key, source, isNew) {
-    var script = document.createElement('script');
+  var createLoad = function(key, source, index, isNew) {
+    getResource(key, source, isNew, function(code) {
+      runTogether(key, code);
+    }, function(params, error) {
+      createScriptTag(params.path);
+      throw new Error(error);
+    })
+  };
 
-    if (isNew) {
-      requestJS(source, key, function(path, key, response) {
-        source = response
-        var code = '!function(){' + source + '\n}();';
-        script.appendChild(document.createTextNode(code));
-        document.head.appendChild(script);
+  var getResource = function(key, source, isNew, callback, fallback) {
+    key = '__LS_' + key.toUpperCase() + '__';
 
-        setLocalStorage(__VERSION__, window.__LS__.version)
-        setLocalStorage(key, response)
+    if (!storage.check(key) || isNew) {
+      requestJS({
+        key: key,
+        path: source
+      }, function(params, response) {
+        storage.set(VERSION, window.__LS__.version);
+        storage.set(params.key, response);
+
+        callback(response);
+      }, function(params, error) {
+        fallback(params, error);
       })
     } else {
-      source = getLocalStorage(key)
-      var code = '!function(){' + source + '\n}();';
-      script.appendChild(document.createTextNode(code));
-      document.head.appendChild(script);
+      callback(storage.get(key));
     }
-  }
+  };
 
-  var runLoader = function() {
-    var version = getLocalStorage(__VERSION__)
-    var app = window.__LS__.entry
+  var runTogether = function(key, code) {
+    lib[key] = code;
+    lib.length += 1;
 
-    var keys = Object.keys(app)
+    if (lib.length === keys.length) {
+      keys.forEach(function(item) {
+        appendScriptTag(lib[item])
+      })
+    }
+  };
 
-    keys.forEach(function(key) {
-      createScript(`__LS_${key.toUpperCase()}__`, app[key], version !== window.__LS__.version)
+  var appendScriptTag = function(code) {
+    var script = document.createElement('script');
+    script.appendChild(document.createTextNode(code));
+    document.head.appendChild(script);
+  };
+
+  var runLoader = function(type) {
+    var version = storage.get(VERSION);
+
+    if (type === 'cleaner') {
+      version = 'cleaner';
+    }
+
+    keys.forEach(function(key, index) {
+      createLoad(key, entry[key], index, version !== window.__LS__.version);
     })
-  }
+  };
 
-  runLoader()
-}
-</script>
-<script type="text/javascript">
-__clientKit__()
-</script></body></html>
+  runLoader(type);
+}<script type="text/javascript">__client__('true')</script></body>
+</html>

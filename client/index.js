@@ -39,6 +39,10 @@ module.exports = function __client__(type) {
     }
   };
 
+  var createScriptTag = function(src) {
+    return `<script type="text/javascript" src="${src}"></script>`;
+  };
+
   var requestJS = function(params, callback, fallback){
     try{
       var xhr = new XMLHttpRequest();
@@ -61,9 +65,10 @@ module.exports = function __client__(type) {
 
   var createLoad = function(key, source, index, isNew) {
     getResource(key, source, isNew, function(code) {
-      runTogether(key, code)
+      runTogether(key, code);
     }, function(params, error) {
-      console.log(params, error);
+      createScriptTag(params.path);
+      throw new Error(error);
     })
   };
 
