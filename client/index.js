@@ -39,10 +39,6 @@ module.exports = function __client__(type) {
     }
   };
 
-  var createScriptTag = function(src) {
-    return `<script type="text/javascript" src="${src}"></script>`;
-  };
-
   var requestJS = function(params, callback, fallback){
     try{
       var xhr = new XMLHttpRequest();
@@ -67,7 +63,7 @@ module.exports = function __client__(type) {
     getResource(key, source, isNew, function(code) {
       runTogether(key, code);
     }, function(params, error) {
-      createScriptTag(params.path);
+      appendScriptTag('', params.path);
       throw new Error(error);
     })
   };
@@ -103,9 +99,17 @@ module.exports = function __client__(type) {
     }
   };
 
-  var appendScriptTag = function(code) {
+  var appendScriptTag = function(code, src) {
     var script = document.createElement('script');
-    script.appendChild(document.createTextNode(code));
+
+    if (src) {
+      script.src = src;
+    }
+
+    if (code) {
+      script.appendChild(document.createTextNode(code));
+    }
+
     document.head.appendChild(script);
   };
 
