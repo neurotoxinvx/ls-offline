@@ -70,7 +70,7 @@
 /* 0 */
 /***/ (function(module, exports) {
 
-console.log('1')
+console.log("LSOffline test")
 
 /***/ })
 /******/ ]);

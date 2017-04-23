@@ -1,5 +1,5 @@
 var path = require('path')
-var version = require('./package.json').version
+var pck = require('./package.json')
 
 var HtmlWebpackPlugin = require('html-webpack-plugin')
 var LSOffline = require('./index.js')
@@ -18,10 +18,16 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      inject: false
+      inject: false,
+      minify: {
+        removeComments: true,
+        collapseWhitespace: true,
+        removeAttributeQuotes: true
+      },
     }),
     new LSOffline({
-      version: version
+      page: pck.name,
+      version: pck.version
     })
   ]
 }

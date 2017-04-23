@@ -1,16 +1,19 @@
-var utils = module.exports
+var utils = module.exports;
 
 var LS = {
+  page: '',
   version: '',
   entry: {}
 };
 
-utils.initConfig = function(version, key, value) {
+utils.initConfig = function(page, version, key, value) {
   if (!version) {
     version = '0.0.0';
   }
-  var temp = {}
-  temp = Object.assign(LS, temp)
+
+  var temp = {};
+  temp = Object.assign(LS, temp);
+  temp.page = page;
   temp.version = version;
   temp.entry[key] = value;
   return temp;
@@ -28,9 +31,17 @@ utils.createConfig = function(config) {
   return `<script type="text/javascript">window.__LS__ = ${JSON.stringify(config)}</script>`;
 };
 
-utils.createClient = function(kit, funName, type) {
+utils.createClient = function(kit) {
   if (typeof type === 'undefined') {
     type = true;
   }
-  return `<script type="text/javascript">${kit}</script><script type="text/javascript">${funName}('${type}')</script>`;
+  return `<script type="text/javascript">${kit}</script>`;
+};
+
+utils.createKit = function() {
+  return `<script type="text/javascript">var __clientKit__ = new __client__();</script>`;
+};
+
+utils.createRunner = function() {
+  return `<script type="text/javascript">__clientKit__.runLoader()</script>`;
 };

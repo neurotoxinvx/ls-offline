@@ -1,6 +1,6 @@
 {
   "name": "ls-offline",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A webpack plugin for cache static resource",
   "main": "index.js",
   "scripts": {
@@ -17,7 +17,8 @@
   },
   "homepage": "https://github.com/neurotoxinvx/ls-offline#readme",
   "dependencies": {
-    "cheerio": "^0.22.0"
+    "cheerio": "^0.22.0",
+    "uglify-js": "^2.8.22"
   },
   "devDependencies": {
     "html-webpack-plugin": "^2.28.0",

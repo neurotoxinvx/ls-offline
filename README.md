@@ -52,11 +52,11 @@ new LSOffline({
 
 ##### 注：更新资源请务必升级版本号
 
-###### 2.cache
+###### 2.page
 
-类型: Boolean
+类型: String
 
-是否启用 LocalStorage 缓存，默认为 `true` ，如果置为 `false` ，则每次加载页面都会发送加载资源请求。
+本地缓存项目名，用户区分同域名不同页面的存储资源 key
 
 ### 依赖
 

@@ -1,45 +1,50 @@
-module.exports = function __client__(type) {
-  var VERSION = '__LS_VERSION__';
-  var entry = window.__LS__.entry;
-  var keys = [];
+function __client__() {
+  this.entry = window.__LS__.entry;
 
-  for (var key in entry) {
-    if (entry.hasOwnProperty(key)) {
-      keys.push(key)
+  this.keys = [];
+
+  for (var key in this.entry) {
+    if (this.entry.hasOwnProperty(key)) {
+      this.keys.push(key)
     }
   }
-  var lib = {
+
+  this.lib = {
     length: 0
   };
+}
 
-  var storage = {
+__client__.prototype = {
+  storage: {
+    modify: function(key) {
+      return '_LS_' + window.__LS__.page.toUpperCase() + '_' + key.toUpperCase() + '_';
+    },
     check: function(key) {
-      return window.localStorage.hasOwnProperty(key)
+      return window.localStorage.hasOwnProperty(this.modify(key));
     },
     get: function(key) {
       try {
-        return window.localStorage.getItem(key);
+        return window.localStorage.getItem(this.modify(key));
       } catch(error) {
         throw new Error(error);
       }
     },
     set: function(key, value) {
       try {
-        window.localStorage.setItem(key, value)
+        window.localStorage.setItem(this.modify(key), value)
       } catch(error) {
         throw new Error(error);
       }
     },
     remove: function(key) {
       try {
-        window.localStorage.removeItem(key)
+        window.localStorage.removeItem(this.modify(key))
       } catch(error) {
         throw new Error(error)
       }
     }
-  };
-
-  var requestJS = function(params, callback, fallback){
+  },
+  requestJS: function(params, callback, fallback){
     try{
       var xhr = new XMLHttpRequest();
       xhr.open("get", params.path, true);
@@ -57,49 +62,49 @@ module.exports = function __client__(type) {
       fallback(params, error);
       throw new Error(error);
     }
-  };
+  },
+  createLoad: function(key, source, index, isNew) {
+    var self = this;
 
-  var createLoad = function(key, source, index, isNew) {
-    getResource(key, source, isNew, function(code) {
-      runTogether(key, code);
+    self.getResource(key, source, isNew, function(code) {
+      self.runTogether(key, code);
     }, function(params, error) {
-      appendScriptTag('', params.path);
+      self.appendScriptTag('', params.path);
       throw new Error(error);
     })
-  };
+  },
+  getResource: function(key, source, isNew, callback, fallback) {
+    var self = this;
 
-  var getResource = function(key, source, isNew, callback, fallback) {
-    key = '__LS_' + key.toUpperCase() + '__';
-
-    if (!storage.check(key) || isNew) {
-      requestJS({
+    if (!self.storage.check(key) || isNew) {
+      self.requestJS({
         key: key,
         path: source
       }, function(params, response) {
-        storage.set(VERSION, window.__LS__.version);
-        storage.set(params.key, response);
+        self.storage.set('version', window.__LS__.version);
+        self.storage.set(params.key, response);
 
         callback(response);
       }, function(params, error) {
         fallback(params, error);
       })
     } else {
-      callback(storage.get(key));
+      callback(self.storage.get(key));
     }
-  };
+  },
+  runTogether: function(key, code) {
+    var self = this;
 
-  var runTogether = function(key, code) {
-    lib[key] = code;
-    lib.length += 1;
+    self.lib[key] = code;
+    self.lib.length += 1;
 
-    if (lib.length === keys.length) {
-      keys.forEach(function(item) {
-        appendScriptTag(lib[item])
+    if (self.lib.length === self.keys.length) {
+      self.keys.forEach(function(item) {
+        self.appendScriptTag(self.lib[item])
       })
     }
-  };
-
-  var appendScriptTag = function(code, src) {
+  },
+  appendScriptTag: function(code, src) {
     var script = document.createElement('script');
 
     if (src) {
@@ -111,19 +116,13 @@ module.exports = function __client__(type) {
     }
 
     document.head.appendChild(script);
-  };
+  },
+  runLoader: function() {
+    var self = this;
+    var version = self.storage.get('version');
 
-  var runLoader = function(type) {
-    var version = storage.get(VERSION);
-
-    if (type === 'cleaner') {
-      version = 'cleaner';
-    }
-
-    keys.forEach(function(key, index) {
-      createLoad(key, entry[key], index, version !== window.__LS__.version);
+    self.keys.forEach(function(key, index) {
+      self.createLoad(key, self.entry[key], index, version !== window.__LS__.version);
     })
-  };
-
-  runLoader(type);
+  }
 };
