@@ -1,19 +1,14 @@
 var path = require('path')
-var pck = require('./package.json')
 
 var HtmlWebpackPlugin = require('html-webpack-plugin')
-var LSOffline = require('./index.js')
-
-require('shelljs/global');
-
-rm('-rf', './example');
+var LSOffline = require('../index.js')
 
 module.exports = {
   entry: {
-    index: './src/main.js'
+    index: './demo/src/main.js'
   },
   output: {
-    path: path.join(__dirname, './example'),
+    path: path.join(__dirname, 'dist'),
     filename: '[name].js'
   },
   plugins: [
@@ -26,8 +21,8 @@ module.exports = {
       },
     }),
     new LSOffline({
-      page: pck.name,
-      version: pck.version
+      cache: true,
+      debug: false
     })
   ]
 }

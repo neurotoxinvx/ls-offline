@@ -8,7 +8,7 @@ WebPack 静态资源离线化插件
 
 简单，仅需搭配 html-webpack-plugin 即可运行
 
-省心，关联 package.json 版本号后，每次上线自动更新本地离线资源
+省心，每次上线自动更新本地离线资源
 
 ### 快速开始
 
@@ -25,9 +25,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       inject: false
     }),
-    new LSOffline({
-      version: version
-    })
+    new LSOffline()
   ]
 }
 
@@ -37,26 +35,28 @@ module.exports = {
 
 ```javascript
 new LSOffline({
-  version: '0.0.1',
-  cache: true
+  cache: true,
+  debug: false
 })
 ```
 
 ##### 参数列表:
 
-###### 1.version
+###### 1.debug
 
-类型: String
+类型: Boolean
 
-本地缓存版本号，用于本地缓存对比是否需要请求更新静态资源，建议传入 package.json 中的 version。
+默认: `false`
 
-##### 注：更新资源请务必升级版本号
+是否开启 debug 模式，开启 debug 模式后 client 端代码不会进行压缩混淆。默认为 `false`
 
-###### 2.page
+###### 2.cache
 
-类型: String
+类型: Boolean
 
-本地缓存项目名，用户区分同域名不同页面的存储资源 key
+默认: `true`
+
+是否启用 localStorage 离线化。默认为 `true`
 
 ### 依赖
 

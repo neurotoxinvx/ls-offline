@@ -1,21 +1,13 @@
 var utils = module.exports;
 
 var LS = {
-  page: '',
-  version: '',
-  entry: {}
+  entry: []
 };
 
-utils.initConfig = function(page, version, key, value) {
-  if (!version) {
-    version = '0.0.0';
-  }
-
+utils.initConfig = function(key) {
   var temp = {};
   temp = Object.assign(LS, temp);
-  temp.page = page;
-  temp.version = version;
-  temp.entry[key] = value;
+  temp.entry.push(key);
   return temp;
 };
 
@@ -23,25 +15,22 @@ utils.createScriptTag = function(src) {
   return `<script type="text/javascript" src="${src}"></script>`;
 };
 
+utils.appendScriptTag = function(code) {
+  return `<script type="text/javascript">${code}</script>`;
+};
+
 utils.createStyleTag = function(src) {
   return `<link rel="stylesheet" href="${src}" />`;
 };
 
 utils.createConfig = function(config) {
-  return `<script type="text/javascript">window.__LS__ = ${JSON.stringify(config)}</script>`;
+  return `window._LSOffline_ = ${JSON.stringify(config)};`;
 };
 
 utils.createClient = function(kit) {
-  if (typeof type === 'undefined') {
-    type = true;
-  }
-  return `<script type="text/javascript">${kit}</script>`;
+  return `${kit}`;
 };
 
-utils.createKit = function() {
-  return `<script type="text/javascript">var __clientKit__ = new __client__();</script>`;
-};
-
-utils.createRunner = function() {
-  return `<script type="text/javascript">__clientKit__.runLoader()</script>`;
+utils.createKit = function(options) {
+  return `var _clientKit_ = new _client_(${options});`;
 };

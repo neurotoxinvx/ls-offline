@@ -1,23 +1,18 @@
-function __client__() {
-  this.entry = window.__LS__.entry;
-
-  this.keys = [];
-
-  for (var key in this.entry) {
-    if (this.entry.hasOwnProperty(key)) {
-      this.keys.push(key)
-    }
-  }
+function _client_(options) {
+  this.options = options;
+  this.entry = window._LSOffline_.entry;
 
   this.lib = {
     length: 0
   };
+
+  this.runLoader()
 }
 
-__client__.prototype = {
+_client_.prototype = {
   storage: {
     modify: function(key) {
-      return '_LS_' + window.__LS__.page.toUpperCase() + '_' + key.toUpperCase() + '_';
+      return key;
     },
     check: function(key) {
       return window.localStorage.hasOwnProperty(this.modify(key));
@@ -63,25 +58,24 @@ __client__.prototype = {
       throw new Error(error);
     }
   },
-  createLoad: function(key, source, index, isNew) {
+  createLoad: function(key) {
     var self = this;
 
-    self.getResource(key, source, isNew, function(code) {
+    self.getResource(key, function(code) {
       self.runTogether(key, code);
     }, function(params, error) {
       self.appendScriptTag('', params.path);
       throw new Error(error);
     })
   },
-  getResource: function(key, source, isNew, callback, fallback) {
+  getResource: function(key, callback, fallback) {
     var self = this;
 
-    if (!self.storage.check(key) || isNew) {
+    if (!self.storage.check(key) || !self.options.cache) {
       self.requestJS({
         key: key,
-        path: source
+        path: key
       }, function(params, response) {
-        self.storage.set('version', window.__LS__.version);
         self.storage.set(params.key, response);
 
         callback(response);
@@ -98,10 +92,11 @@ __client__.prototype = {
     self.lib[key] = code;
     self.lib.length += 1;
 
-    if (self.lib.length === self.keys.length) {
-      self.keys.forEach(function(item) {
-        self.appendScriptTag(self.lib[item])
-      })
+    if (self.lib.length === self.entry.length) {
+      for (var i = 0; i < self.entry.length; i++) {
+        var item = self.entry[i];
+        self.appendScriptTag(self.lib[item]);
+      }
     }
   },
   appendScriptTag: function(code, src) {
@@ -119,10 +114,9 @@ __client__.prototype = {
   },
   runLoader: function() {
     var self = this;
-    var version = self.storage.get('version');
 
-    self.keys.forEach(function(key, index) {
-      self.createLoad(key, self.entry[key], index, version !== window.__LS__.version);
-    })
+    for (var i = 0; i < self.entry.length; i++) {
+      self.createLoad(self.entry[i]);
+    }
   }
 };

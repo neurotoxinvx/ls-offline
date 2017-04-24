@@ -1,11 +1,28 @@
+var fs = require('fs');
 var cheerio = require('cheerio');
 var UglifyJs = require('uglify-js');
 
 var utils = require('./utils');
-var client = UglifyJs.minify('./client/index.js').code;
+var client = '';
 
 function LSOffline(options) {
-  this.options = options
+  if (options.cache !== false) {
+    options.cache = true;
+  }
+
+  if (options.debug !== true) {
+    options.debug = false;
+  }
+
+  this.options = options;
+
+  if(!options.debug) {
+    client = UglifyJs.minify('./client/index.js').code;
+  } else {
+    fs.readFile('./client/index.js', 'utf-8', function(err, data) {
+      client = data;
+    })
+  }
 }
 
 LSOffline.prototype.apply = function(compiler) {
@@ -29,16 +46,16 @@ LSOffline.prototype.apply = function(compiler) {
       var insertTemp = '';
 
       chunks.forEach(function(key) {
-        LS = utils.initConfig(self.options.page, self.options.version, key, htmlPluginData.assets.chunks[key].entry)
+        LS = utils.initConfig(htmlPluginData.assets.chunks[key].entry)
       });
 
       insertTemp += utils.createConfig(LS);
 
       insertTemp += utils.createClient(client);
 
-      insertTemp += utils.createKit();
+      insertTemp += utils.createKit(JSON.stringify(self.options));
 
-      insertTemp += utils.createRunner();
+      insertTemp = utils.appendScriptTag(insertTemp);
 
       $('body').append(insertTemp);
 
