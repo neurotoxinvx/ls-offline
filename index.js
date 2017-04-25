@@ -1,11 +1,17 @@
 var fs = require('fs');
+var path = require('path');
 var cheerio = require('cheerio');
 var UglifyJs = require('uglify-js');
 
 var utils = require('./utils');
+var clientPath = path.join(__dirname, './client/index.js');
 var client = '';
 
 function LSOffline(options) {
+  if (!options) {
+    options = {};
+  }
+
   if (options.cache !== false) {
     options.cache = true;
   }
@@ -17,9 +23,9 @@ function LSOffline(options) {
   this.options = options;
 
   if(!options.debug) {
-    client = UglifyJs.minify('./client/index.js').code;
+    client = UglifyJs.minify(clientPath).code;
   } else {
-    fs.readFile('./client/index.js', 'utf-8', function(err, data) {
+    fs.readFile(clientPath, 'utf-8', function(err, data) {
       client = data;
     })
   }
