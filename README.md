@@ -25,7 +25,7 @@ WebPack 静态资源离线化插件
 ### 安装
 
 ```shell
-npm install ls-offline --save-dev
+$ npm install ls-offline --save-dev
 ```
 
 
@@ -55,16 +55,16 @@ module.exports = {
 
 ```shell
 # clone ls-offline 项目到本地
-git clone https://github.com/neurotoxinvx/ls-offline.git
+$ git clone https://github.com/neurotoxinvx/ls-offline.git
 
 # 进入 ls-offline 项目
-cd ls-offline
+$ cd ls-offline
 
 # 安装项目依赖
-npm install
+$ npm install
 
 # 运行 DEMO
-npm run demo
+$ npm run demo
 ```
 
 
@@ -99,3 +99,17 @@ new LSOffline({
 默认: `true`
 
 是否启用 localStorage 离线化。默认为 `true`
+
+
+
+### Inspired by
+
+[静态资源（JS/CSS）存储在localStorage有什么缺点？为什么没有被广泛应用？- 张云龙的回答](https://www.zhihu.com/question/28467444)
+
+[LSLoader - localStorage loader to increase mobile webapp speed](https://github.com/sexdevil/LSLoader)
+
+
+
+### LICENSE
+
+MIT
