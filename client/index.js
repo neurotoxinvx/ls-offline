@@ -11,32 +11,50 @@ function _client_(options) {
 
 _client_.prototype = {
   storage: {
+    test: function () {
+      try {
+        var testKey = '_storeJS_'
+        this.set(testKey, testKey)
+
+        if (this.get(testKey) !== testKey) {
+          this.storageDisable = true;
+          return
+        }
+
+        this.remove(testKey)
+      } catch (e) {
+        this.storageDisable = true;
+      }
+    },
     modify: function(key) {
       return key;
     },
     check: function(key) {
+      if (this.storageDisable) {
+        return false
+      }
       return window.localStorage.hasOwnProperty(this.modify(key));
     },
     get: function(key) {
-      try {
-        return window.localStorage.getItem(this.modify(key));
-      } catch(error) {
-        throw new Error(error);
+      if (this.storageDisable) {
+        return false
       }
+
+      return window.localStorage.getItem(this.modify(key));
     },
     set: function(key, value) {
-      try {
-        window.localStorage.setItem(this.modify(key), value)
-      } catch(error) {
-        throw new Error(error);
+      if (this.storageDisable) {
+        return false
       }
+
+      window.localStorage.setItem(this.modify(key), value)
     },
     remove: function(key) {
-      try {
-        window.localStorage.removeItem(this.modify(key))
-      } catch(error) {
-        throw new Error(error)
+      if (this.storageDisable) {
+        return false
       }
+
+      window.localStorage.removeItem(this.modify(key))
     }
   },
   requestJS: function(params, callback, fallback){
@@ -114,6 +132,8 @@ _client_.prototype = {
   },
   runLoader: function() {
     var self = this;
+
+    this.storage.test();
 
     for (var i = 0; i < self.entry.length; i++) {
       self.createLoad(self.entry[i]);
