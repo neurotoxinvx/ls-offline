@@ -54,9 +54,16 @@ module.exports = {
 ### DEMO
 
 ```shell
+# clone ls-offline 项目到本地
 git clone https://github.com/neurotoxinvx/ls-offline.git
+
+# 进入 ls-offline 项目
 cd ls-offline
+
+# 安装项目依赖
 npm install
+
+# 运行 DEMO
 npm run demo
 ```
 
