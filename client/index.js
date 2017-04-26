@@ -2,24 +2,24 @@ function _client_(options) {
   this.options = options;
   this.entry = window._LSOffline_.entry;
 
-  this.queue = []
+  this.queue = [];
 
-  this.runLoader()
+  this.runLoader();
 }
 
 _client_.prototype = {
   storage: {
-    canIUse: function () {
+    able: function () {
       try {
-        var testKey = '_storageTest_'
-        this.set(testKey, testKey)
+        var testKey = '_storageTest_';
+        window.localStorage.setItem(testKey, testKey);
 
-        if (this.get(testKey) !== testKey) {
+        if (window.localStorage.getItem(testKey) !== testKey) {
           this.storageDisable = true;
           return
         }
 
-        this.remove(testKey)
+        window.localStorage.removeItem(testKey)
       } catch (e) {
         this.storageDisable = true;
       }
@@ -119,14 +119,14 @@ _client_.prototype = {
     if (!!self.queue[0] && !!self.queue[0].code && self.queue[0].status === 'loaded') {
       self.queue[0].status = 'appending';
 
-      self.appendScriptTag(self.queue[0].code, null, function () {
-        self.queue.status = 'appended';
-        self.queue.shift();
+      self.appendScriptTag(self.queue[0].code);
 
-        if (self.queue.length > 0) {
-          self.runQueue();
-        }
-      });
+      self.queue.status = 'appended';
+      self.queue.shift();
+
+      if (self.queue.length > 0) {
+        self.runQueue();
+      }
     }
   },
   appendScriptTag: function(code, src, loadedCallBack) {
@@ -134,7 +134,6 @@ _client_.prototype = {
 
     if (src) {
       script.src = src;
-      script.onload = loadedCallBack;
     }
 
     if (code) {
@@ -146,7 +145,7 @@ _client_.prototype = {
   runLoader: function() {
     var self = this;
 
-    this.storage.canIUse();
+    this.storage.able();
 
     for (var i = 0; i < self.entry.length; i++) {
       self.createLoad(self.entry[i]);
