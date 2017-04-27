@@ -5,6 +5,8 @@ function _client_(options) {
   this.queue = [];
 
   this.runLoader();
+
+  this.updateHistory();
 }
 
 _client_.prototype = {
@@ -103,6 +105,30 @@ _client_.prototype = {
     } else {
       callback(self.storage.get(key));
     }
+  },
+  updateHistory: function() {
+    var manifest = this.entry;
+    var reference = window.location.host + window.location.pathname;
+    var historyList = JSON.parse(this.storage.get('_LS_HISTORY_')) || {};
+    var currentPageHistory = historyList[reference] || {};
+
+    for (var i = 0; i < manifest.length; i++) {
+      var item = manifest[i];
+      currentPageHistory[item] = true;
+    }
+
+    for (var k in currentPageHistory) {
+      if (currentPageHistory.hasOwnProperty(k)) {
+        if (manifest.indexOf(k) <= -1) {
+          this.storage.remove(k);
+          delete currentPageHistory[k];
+        }
+      }
+    }
+
+    historyList[reference] = currentPageHistory;
+
+    this.storage.set('_LS_HISTORY_', JSON.stringify(historyList));
   },
   runQueue: function(key, code) {
     var self = this;

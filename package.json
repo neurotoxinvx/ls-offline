@@ -1,6 +1,6 @@
 {
   "name": "ls-offline",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "A webpack plugin for cache static resource",
   "main": "index.js",
   "scripts": {
