@@ -10,7 +10,11 @@ var port = 8081
 
 rm('-rf', './dist')
 
-var compiler = webpack(webpackConfig)
+var compiler = webpack(webpackConfig, function (err, stats) {
+  if (err) {
+    console.log(err)
+  }
+})
 
 var server = new WebpackDevServer(compiler, {
   contentBase: path.join(__dirname, './dist'),

@@ -1,1 +1,1 @@
-console.log('Test')
+document.write('<h3>LSOffline is working!</h3>');

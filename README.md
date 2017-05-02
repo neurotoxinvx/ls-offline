@@ -65,6 +65,9 @@ $ npm install
 
 # 运行 DEMO
 $ npm run demo
+
+# 编译打包输出文件
+$ npm run build
 ```
 
 

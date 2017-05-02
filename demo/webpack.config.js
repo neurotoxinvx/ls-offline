@@ -9,7 +9,7 @@ module.exports = {
   },
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: '[name].js'
+    filename: '[name].[chunkhash:7].js'
   },
   plugins: [
     new HtmlWebpackPlugin({

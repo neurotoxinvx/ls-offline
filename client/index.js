@@ -155,7 +155,7 @@ _client_.prototype = {
       }
     }
   },
-  appendScriptTag: function(code, src, loadedCallBack) {
+  appendScriptTag: function(code, src) {
     var script = document.createElement('script');
 
     if (src) {
